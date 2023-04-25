@@ -1,7 +1,5 @@
 <script>
-export default {
-  // name: "winners",
-};
+export default {};
 </script>
 
 <template>

@@ -21,7 +21,9 @@ export default {
   <div class="tabs">
     <div class="tab">
       <div v-for="(tab, index) in tabs" :key="index">
-        <button @click="activeTab = index">{{ tab }}</button>
+        <button @click="activeTab = index">
+          {{ tab }}
+        </button>
       </div>
     </div>
     <div>
