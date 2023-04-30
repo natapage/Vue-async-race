@@ -1,5 +1,5 @@
-<script>
-export default {};
+<script setup>
+import garageList from "../components/GarageList.vue";
 </script>
 
 <template>
@@ -21,6 +21,7 @@ export default {};
       <div class="garage">
         <h1>Garage ({{}})</h1>
         <h2>Page # {{}}</h2>
+        <garageList></garageList>
       </div>
     </div>
   </div>
