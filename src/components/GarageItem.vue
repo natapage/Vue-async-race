@@ -2,7 +2,7 @@
 import { ref, defineProps } from "vue";
 import car from "./Car.vue";
 
-const emit = defineEmits(["remove"]);
+const emit = defineEmits(["remove", "select"]);
 const props = defineProps({
   car: {
     type: Object,
@@ -39,7 +39,7 @@ function stop() {
 <template>
   <div class="car-item">
     <div class="control-btns">
-      <button class="btn">SELECT</button>
+      <button class="btn" @click="$emit('select', car)">SELECT</button>
       <button class="btn" @click="$emit('remove', car)">REMOVE</button>
       <text class="car-brand">{{ props.car.name }}</text>
     </div>

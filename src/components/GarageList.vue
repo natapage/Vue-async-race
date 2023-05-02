@@ -2,7 +2,7 @@
 import garageItem from "./GarageItem.vue";
 import { defineProps } from "vue";
 
-const emit = defineEmits(["remove"]);
+const emit = defineEmits(["remove", "select"]);
 
 const props = defineProps({
   garage: {
@@ -17,6 +17,7 @@ const props = defineProps({
     :car="car"
     :key="car.id"
     @remove="$emit('remove', car)"
+    @select="$emit('select', car)"
   ></garageItem>
 </template>
 

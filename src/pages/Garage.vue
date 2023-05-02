@@ -1,8 +1,9 @@
 <script setup>
 import garageList from "../components/GarageList.vue";
-import { ref } from "vue";
+import { ref, onMounted } from "vue";
+import { getCars } from "../api";
 
-const emit = defineEmits(["remove"]);
+const emit = defineEmits(["remove", "select"]);
 
 const garage = ref([
   {
@@ -14,6 +15,9 @@ const garage = ref([
 
 let carName = ref("");
 let carColor = ref("#ffffff");
+let updCarName = ref("");
+let updCarColor = ref("#ffffff");
+let updCarId = ref("");
 
 function createCar() {
   garage.value.push({
@@ -21,12 +25,33 @@ function createCar() {
     color: carColor.value,
     id: Date.now(),
   });
+  carName.value = "";
+  carColor.value = "#ffffff";
+}
+
+function handleSelect(car) {
+  updCarId.value = car.id;
+  updCarName.value = car.name;
+  updCarColor.value = car.color;
+}
+
+function updateCar() {
+  const carToUpdate = garage.value.find((car) => car.id === updCarId.value);
+  carToUpdate.name = updCarName.value;
+  carToUpdate.color = updCarColor.value;
+
+  updCarName.value = "";
+  updCarColor.value = "#ffffff";
+  updCarId.value = "";
 }
 
 function removeGarageItem(car) {
-  console.log(car);
   garage.value = garage.value.filter((c) => c.id !== car.id);
 }
+
+onMounted(() => {
+  console.log(getCars());
+});
 </script>
 
 <template>
@@ -35,12 +60,16 @@ function removeGarageItem(car) {
       <div class="creating-form">
         <input v-model="carName" type="text" />
         <input type="color" v-model="carColor" />
-        <button class="btn" @click="createCar">Create</button>
+        <button class="btn" @click="createCar" :disabled="!carName">
+          Create
+        </button>
       </div>
       <div class="updating-form">
-        <input />
-        <input type="color" />
-        <button class="btn">Update</button>
+        <input type="text" v-model="updCarName" />
+        <input type="color" v-model="updCarColor" />
+        <button class="btn" :disabled="!updCarName" @click="updateCar">
+          Update
+        </button>
       </div>
       <div class="manage-btns">
         <button class="btn">RACE</button>
@@ -50,7 +79,11 @@ function removeGarageItem(car) {
       <div class="garage">
         <h1>Garage ({{ garage.length }})</h1>
         <h2>Page # {{}}</h2>
-        <garageList :garage="garage" @remove="removeGarageItem"></garageList>
+        <garageList
+          :garage="garage"
+          @remove="removeGarageItem"
+          @select="handleSelect"
+        ></garageList>
       </div>
     </div>
   </div>
