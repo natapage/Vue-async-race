@@ -1,7 +1,7 @@
 <script setup>
 import garageList from "../components/GarageList.vue";
 import { ref, onMounted } from "vue";
-import { getCars, createCar, deleteCar } from "../api";
+import { getCars, createCar, deleteCar, updateCar } from "../api";
 
 const emit = defineEmits(["remove", "select"]);
 
@@ -41,13 +41,25 @@ async function handleCreate() {
   carColor.value = "#ffffff";
 }
 
-function updateCar() {
-  const carToUpdate = garage.value.find((car) => car.id === updCarId.value);
-  carToUpdate.name = updCarName.value;
-  carToUpdate.color = updCarColor.value;
+// function updateCar() {
+//   const carToUpdate = garage.value.find((car) => car.id === updCarId.value);
+//   carToUpdate.name = updCarName.value;
+//   carToUpdate.color = updCarColor.value;
+//   updCarName.value = "";
+//   updCarColor.value = "#ffffff";
+//   updCarId.value = "";
+// }
+
+async function handleUpdate() {
+  const carToUpdate = {
+    name: updCarName.value,
+    color: updCarColor.value,
+  };
+  await updateCar(carToUpdate, updCarId.value);
+  let responce = await getCars();
+  garage.value = responce.items;
   updCarName.value = "";
   updCarColor.value = "#ffffff";
-  updCarId.value = "";
 }
 
 async function handleRemove(id) {
@@ -76,7 +88,7 @@ onMounted(() => getCars().then((res) => (garage.value = res.items)));
       <div class="updating-form">
         <input type="text" v-model="updCarName" />
         <input type="color" v-model="updCarColor" />
-        <button class="btn" :disabled="!updCarName" @click="updateCar">
+        <button class="btn" :disabled="!updCarName" @click="handleUpdate">
           Update
         </button>
       </div>

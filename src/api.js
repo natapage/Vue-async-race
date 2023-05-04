@@ -29,13 +29,15 @@ export const deleteCar = async (id) =>
   (await fetch(`${garage}/${id}`, { method: "DELETE" })).json();
 
 export const updateCar = async (body, id) =>
-  await fetch(`${garage}/${id}`, {
-    method: PUT,
-    body: JSON.stringify(body),
-    headers: {
-      "Content-type": "application/json",
-    },
-  }).json();
+  (
+    await fetch(`${garage}/${id}`, {
+      method: "PUT",
+      body: JSON.stringify(body),
+      headers: {
+        "Content-type": "application/json",
+      },
+    })
+  ).json();
 
 // export const startEngine = (async (id) =>
 //   await fetch(`${garage}/${id}&status=started`)).json();
