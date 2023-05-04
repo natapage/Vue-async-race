@@ -1,6 +1,6 @@
 <script setup>
 import { ref, defineProps } from "vue";
-import car from "./Car.vue";
+import garageCar from "./GarageCar.vue";
 
 const emit = defineEmits(["remove", "select"]);
 const props = defineProps({
@@ -37,10 +37,14 @@ function stop() {
 </script>
 
 <template>
-  <div class="car-item">
-    <div class="control-btns">
-      <button class="btn" @click="$emit('select', car)">SELECT</button>
-      <button class="btn" @click="$emit('remove', car.id)">REMOVE</button>
+  <div class="GarageItem">
+    <div class="GarageItem_Buttons">
+      <button class="GarageItem_ButtonsSelect" @click="$emit('select', car)">
+        SELECT
+      </button>
+      <button class="GarageItem_ButtonsRemove" @click="$emit('remove', car.id)">
+        REMOVE
+      </button>
       <text class="car-brand">{{ props.car.name }}</text>
     </div>
     <div class="race-btns">
@@ -50,7 +54,7 @@ function stop() {
     <div class="track-container">
       <div class="track track-one">
         <div class="car" ref="carElement">
-          <car :color="props.car.color"></car>
+          <garageCar :color="props.car.color"></garageCar>
         </div>
       </div>
       <div class="track track-two">

@@ -1,12 +1,12 @@
 <script>
 import { ref } from "vue";
-import garage from "./pages/Garage.vue";
-import winners from "./pages/Winners.vue";
+import garageView from "./pages/GarageView.vue";
+import winnersView from "./pages/WinnersView.vue";
 
 export default {
   components: {
-    garage,
-    winners,
+    garageView,
+    winnersView,
   },
   setup() {
     const tabs = ref(["to garage", "to winners"]);
@@ -29,10 +29,10 @@ export default {
     <div>
       <div class="content">
         <div v-if="activeTab === 0">
-          <garage />
+          <garageView />
         </div>
         <div v-if="activeTab === 1">
-          <winners />
+          <winnersView />
         </div>
       </div>
     </div>

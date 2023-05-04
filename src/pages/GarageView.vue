@@ -37,20 +37,20 @@ async function handleCreate() {
   await createCar(newCar);
   let responce = await getCars();
   garage.value = responce.items;
+  carName.value = "";
+  carColor.value = "#ffffff";
 }
 
 function updateCar() {
   const carToUpdate = garage.value.find((car) => car.id === updCarId.value);
   carToUpdate.name = updCarName.value;
   carToUpdate.color = updCarColor.value;
-
   updCarName.value = "";
   updCarColor.value = "#ffffff";
   updCarId.value = "";
 }
 
 async function handleRemove(id) {
-  console.log(id);
   await deleteCar(id);
   let responce = await getCars();
   garage.value = responce.items;

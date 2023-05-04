@@ -1,8 +1,8 @@
 const base = "http://localhost:3000";
 
 const garage = `${base}/garage`;
-const engine = `${base}/engine`;
-const winners = `${base}/winners`;
+// const engine = `${base}/engine`;
+// const winners = `${base}/winners`;
 
 export const getCars = async (page, limit = 7) => {
   const response = await fetch(`${garage}?_page=${page}&_limit=${limit}`);
@@ -28,14 +28,14 @@ export const createCar = async (body) =>
 export const deleteCar = async (id) =>
   (await fetch(`${garage}/${id}`, { method: "DELETE" })).json();
 
-// export const updateCar = (async (body, id) =>
-//   await fetch(`${garage}/${id}`, {
-//     method: PUT,
-//     body: JSON.stringify(body),
-//     headers: {
-//       "Content-type": "application/json",
-//     },
-//   })).json();
+export const updateCar = async (body, id) =>
+  await fetch(`${garage}/${id}`, {
+    method: PUT,
+    body: JSON.stringify(body),
+    headers: {
+      "Content-type": "application/json",
+    },
+  }).json();
 
 // export const startEngine = (async (id) =>
 //   await fetch(`${garage}/${id}&status=started`)).json();
