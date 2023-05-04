@@ -16,7 +16,7 @@ const props = defineProps({
     v-for="car in garage"
     :car="car"
     :key="car.id"
-    @remove="$emit('remove', car)"
+    @remove="$emit('remove', car.id)"
     @select="$emit('select', car)"
   ></garageItem>
 </template>

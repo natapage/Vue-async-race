@@ -1,17 +1,11 @@
 <script setup>
 import garageList from "../components/GarageList.vue";
 import { ref, onMounted } from "vue";
-import { getCars } from "../api";
+import { getCars, createCar, deleteCar } from "../api";
 
 const emit = defineEmits(["remove", "select"]);
 
-const garage = ref([
-  {
-    name: "Tesla",
-    color: "#e6e6fa",
-    id: 1,
-  },
-]);
+const garage = ref([]);
 
 let carName = ref("");
 let carColor = ref("#ffffff");
@@ -19,20 +13,30 @@ let updCarName = ref("");
 let updCarColor = ref("#ffffff");
 let updCarId = ref("");
 
-function createCar() {
-  garage.value.push({
-    name: carName.value,
-    color: carColor.value,
-    id: Date.now(),
-  });
-  carName.value = "";
-  carColor.value = "#ffffff";
-}
+// function createCar() {
+//   garage.value.push({
+//     name: carName.value,
+//     color: carColor.value,
+//     id: Date.now(),
+//   });
+//   carName.value = "";
+//   carColor.value = "#ffffff";
+// }
 
 function handleSelect(car) {
   updCarId.value = car.id;
   updCarName.value = car.name;
   updCarColor.value = car.color;
+}
+
+async function handleCreate() {
+  const newCar = {
+    name: carName.value,
+    color: carColor.value,
+  };
+  await createCar(newCar);
+  let responce = await getCars();
+  garage.value = responce.items;
 }
 
 function updateCar() {
@@ -45,13 +49,18 @@ function updateCar() {
   updCarId.value = "";
 }
 
-function removeGarageItem(car) {
-  garage.value = garage.value.filter((c) => c.id !== car.id);
+async function handleRemove(id) {
+  console.log(id);
+  await deleteCar(id);
+  let responce = await getCars();
+  garage.value = responce.items;
 }
 
-onMounted(() => {
-  console.log(getCars());
-});
+// function removeGarageItem(car) {
+//   garage.value = garage.value.filter((c) => c.id !== car.id);
+// }
+
+onMounted(() => getCars().then((res) => (garage.value = res.items)));
 </script>
 
 <template>
@@ -60,7 +69,7 @@ onMounted(() => {
       <div class="creating-form">
         <input v-model="carName" type="text" />
         <input type="color" v-model="carColor" />
-        <button class="btn" @click="createCar" :disabled="!carName">
+        <button class="btn" @click="handleCreate" :disabled="!carName">
           Create
         </button>
       </div>
@@ -81,7 +90,7 @@ onMounted(() => {
         <h2>Page # {{}}</h2>
         <garageList
           :garage="garage"
-          @remove="removeGarageItem"
+          @remove="handleRemove"
           @select="handleSelect"
         ></garageList>
       </div>

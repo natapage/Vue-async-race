@@ -40,7 +40,7 @@ function stop() {
   <div class="car-item">
     <div class="control-btns">
       <button class="btn" @click="$emit('select', car)">SELECT</button>
-      <button class="btn" @click="$emit('remove', car)">REMOVE</button>
+      <button class="btn" @click="$emit('remove', car.id)">REMOVE</button>
       <text class="car-brand">{{ props.car.name }}</text>
     </div>
     <div class="race-btns">
