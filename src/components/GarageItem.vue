@@ -1,6 +1,7 @@
 <script setup>
 import { ref, defineProps } from "vue";
 import garageCar from "./GarageCar.vue";
+import { startEngine } from "../api";
 
 const emit = defineEmits(["remove", "select"]);
 const props = defineProps({
@@ -13,7 +14,11 @@ const carElement = ref(null);
 
 let animationObj;
 
-function start() {
+async function start() {
+  const response = await startEngine(props.car.id);
+  console.log(response);
+  const time = response.distance / response.velocity;
+
   animationObj = carElement.value.animate(
     [
       {
@@ -24,20 +29,22 @@ function start() {
       },
     ],
     {
-      duration: 3000,
-      iterations: Infinity,
+      duration: time,
+      iterations: 1,
       easing: "ease-in-out",
+      fill: "forwards",
     }
   );
 }
 
 function stop() {
-  animationObj.pause();
+  animationObj.reverse();
+  animationObj.finish();
 }
 </script>
 
 <template>
-  <div class="GarageItem">
+  <div class="garage-item">
     <div class="GarageItem_Buttons">
       <button class="GarageItem_ButtonsSelect" @click="$emit('select', car)">
         SELECT
@@ -72,7 +79,7 @@ function stop() {
 }
 .track {
   border-bottom: 1px dashed;
-  border-top: 1px dashed;
+  /* border-top: 1px dashed; */
   height: 70px;
   position: relative;
   display: flex;
@@ -82,7 +89,7 @@ function stop() {
   width: 500px;
 }
 .track-two {
-  width: 80px;
+  width: 100px;
 }
 .track-container {
   display: flex;
@@ -90,5 +97,8 @@ function stop() {
 .flag {
   width: 30px;
   fill: white;
+}
+.garage-item {
+  margin-bottom: 15px;
 }
 </style>

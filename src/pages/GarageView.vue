@@ -1,27 +1,57 @@
 <script setup>
-import garageList from "../components/GarageList.vue";
-import { ref, onMounted } from "vue";
+import GarageList from "../components/GarageList.vue";
+import { ref, onMounted, computed } from "vue";
 import { getCars, createCar, deleteCar, updateCar } from "../api";
 
 const emit = defineEmits(["remove", "select"]);
 
 const garage = ref([]);
 
-let carName = ref("");
-let carColor = ref("#ffffff");
-let updCarName = ref("");
-let updCarColor = ref("#ffffff");
-let updCarId = ref("");
+const carName = ref("");
+const carColor = ref("#ffffff");
+const updCarName = ref("");
+const updCarColor = ref("#ffffff");
+const updCarId = ref("");
+const currentPage = ref(1);
+const carNumber = ref(0);
 
-// function createCar() {
-//   garage.value.push({
-//     name: carName.value,
-//     color: carColor.value,
-//     id: Date.now(),
-//   });
-//   carName.value = "";
-//   carColor.value = "#ffffff";
-// }
+const carBrands = ref([
+  "Toyota",
+  "Ford",
+  "Chevrolet",
+  "Honda",
+  "Nissan",
+  "BMW",
+  "Mercedes-Benz",
+  "Audi",
+  "Volkswagen",
+  "Hyundai",
+  "Kia",
+  "Volvo",
+  "Mazda",
+  "Subaru",
+  "Jeep",
+  "Lexus",
+]);
+
+const carModels = ref([
+  "Corolla",
+  "Civic",
+  "Mustang",
+  "Camaro",
+  "Altima",
+  "M5",
+  "S-Class",
+  "A8",
+  "Golf",
+  "Elantra",
+  "Optima",
+  "XC90",
+  "CX-5",
+  "Impreza",
+  "Wrangler",
+  "RX",
+]);
 
 function handleSelect(car) {
   updCarId.value = car.id;
@@ -35,20 +65,32 @@ async function handleCreate() {
     color: carColor.value,
   };
   await createCar(newCar);
-  let responce = await getCars();
-  garage.value = responce.items;
+  fetchPage(currentPage.value);
   carName.value = "";
   carColor.value = "#ffffff";
 }
 
-// function updateCar() {
-//   const carToUpdate = garage.value.find((car) => car.id === updCarId.value);
-//   carToUpdate.name = updCarName.value;
-//   carToUpdate.color = updCarColor.value;
-//   updCarName.value = "";
-//   updCarColor.value = "#ffffff";
-//   updCarId.value = "";
-// }
+async function generateCars() {
+  for (let i = 0; i < 100; i++) {
+    const newCar = {};
+    newCar.name = `${
+      carBrands.value[Math.floor(Math.random() * carBrands.value.length)]
+    } ${carModels.value[Math.floor(Math.random() * carModels.value.length)]}`;
+    newCar.color =
+      "#" +
+      Math.floor(Math.random() * 16777215)
+        .toString(16)
+        .padStart(6, "0");
+    await createCar(newCar);
+  }
+  fetchPage(currentPage.value);
+}
+
+async function fetchPage(page) {
+  const response = await getCars(page);
+  garage.value = response.items;
+  carNumber.value = response.count;
+}
 
 async function handleUpdate() {
   const carToUpdate = {
@@ -56,23 +98,33 @@ async function handleUpdate() {
     color: updCarColor.value,
   };
   await updateCar(carToUpdate, updCarId.value);
-  let responce = await getCars();
-  garage.value = responce.items;
+  fetchPage(currentPage.value);
   updCarName.value = "";
   updCarColor.value = "#ffffff";
 }
 
 async function handleRemove(id) {
   await deleteCar(id);
-  let responce = await getCars();
-  garage.value = responce.items;
+  fetchPage(currentPage.value);
 }
 
-// function removeGarageItem(car) {
-//   garage.value = garage.value.filter((c) => c.id !== car.id);
-// }
+async function previousPage() {
+  currentPage.value--;
+  let response = await getCars(currentPage.value);
+  garage.value = response.items;
+}
 
-onMounted(() => getCars().then((res) => (garage.value = res.items)));
+async function nextPage() {
+  currentPage.value++;
+  let response = await getCars(currentPage.value);
+  garage.value = response.items;
+}
+
+function startRace() {}
+
+const totalPages = computed(() => Math.floor(carNumber.value / 7) + 1);
+
+onMounted(() => fetchPage(currentPage.value));
 </script>
 
 <template>
@@ -93,18 +145,35 @@ onMounted(() => getCars().then((res) => (garage.value = res.items)));
         </button>
       </div>
       <div class="manage-btns">
-        <button class="btn">RACE</button>
+        <button class="btn" @click="startRace">RACE</button>
         <button class="btn">RESET</button>
-        <button class="btn">GENERATE CARS</button>
+        <button class="btn" @click="generateCars">GENERATE CARS</button>
       </div>
       <div class="garage">
-        <h1>Garage ({{ garage.length }})</h1>
-        <h2>Page # {{}}</h2>
-        <garageList
+        <h1>Garage ({{ carNumber }})</h1>
+        <h2>Page # {{ currentPage }}</h2>
+        <garage-list
           :garage="garage"
           @remove="handleRemove"
           @select="handleSelect"
-        ></garageList>
+        ></garage-list>
+
+        <div class="pagination">
+          <button
+            class="btn"
+            @click="previousPage"
+            :disabled="currentPage === 1"
+          >
+            PREV
+          </button>
+          <button
+            class="btn"
+            @click="nextPage"
+            :disabled="totalPages === currentPage"
+          >
+            NEXT
+          </button>
+        </div>
       </div>
     </div>
   </div>

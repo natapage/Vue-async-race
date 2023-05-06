@@ -1,7 +1,7 @@
 const base = "http://localhost:3000";
 
 const garage = `${base}/garage`;
-// const engine = `${base}/engine`;
+const engine = `${base}/engine`;
 // const winners = `${base}/winners`;
 
 export const getCars = async (page, limit = 7) => {
@@ -39,8 +39,16 @@ export const updateCar = async (body, id) =>
     })
   ).json();
 
-// export const startEngine = (async (id) =>
-//   await fetch(`${garage}/${id}&status=started`)).json();
+export const startEngine = async (id) =>
+  (
+    await fetch(`${engine}?id=${id}&status=started`, {
+      method: "PATCH",
+    })
+  ).json();
 
-// export const stopEngine = (async (id) =>
-//   await fetch(`${garage}/${id}&status=stopped`)).json();
+export const stopEngine = async (id) =>
+  (
+    await fetch(`${engine}?id=${id}&status=stopped`, {
+      method: "PATCH",
+    })
+  ).json();

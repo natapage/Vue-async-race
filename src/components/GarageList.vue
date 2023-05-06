@@ -1,5 +1,5 @@
 <script setup>
-import garageItem from "./GarageItem.vue";
+import GarageItem from "./GarageItem.vue";
 import { defineProps } from "vue";
 
 const emit = defineEmits(["remove", "select"]);
@@ -12,13 +12,13 @@ const props = defineProps({
 </script>
 
 <template>
-  <garageItem
+  <garage-item
     v-for="car in garage"
     :car="car"
     :key="car.id"
     @remove="$emit('remove', car.id)"
     @select="$emit('select', car)"
-  ></garageItem>
+  ></garage-item>
 </template>
 
 <style scoped></style>
