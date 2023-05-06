@@ -53,13 +53,13 @@ const carModels = ref([
   "RX",
 ]);
 
-function handleSelect(car) {
+function handleSelectCar(car) {
   updCarId.value = car.id;
   updCarName.value = car.name;
   updCarColor.value = car.color;
 }
 
-async function handleCreate() {
+async function handleCreateCar() {
   const newCar = {
     name: carName.value,
     color: carColor.value,
@@ -92,7 +92,7 @@ async function fetchPage(page) {
   carNumber.value = response.count;
 }
 
-async function handleUpdate() {
+async function handleUpdateCar() {
   const carToUpdate = {
     name: updCarName.value,
     color: updCarColor.value,
@@ -103,7 +103,7 @@ async function handleUpdate() {
   updCarColor.value = "#ffffff";
 }
 
-async function handleRemove(id) {
+async function handleRemoveCar(id) {
   await deleteCar(id);
   fetchPage(currentPage.value);
 }
@@ -133,14 +133,14 @@ onMounted(() => fetchPage(currentPage.value));
       <div class="creating-form">
         <input v-model="carName" type="text" />
         <input type="color" v-model="carColor" />
-        <button class="btn" @click="handleCreate" :disabled="!carName">
+        <button class="btn" @click="handleCreateCar" :disabled="!carName">
           Create
         </button>
       </div>
       <div class="updating-form">
         <input type="text" v-model="updCarName" />
         <input type="color" v-model="updCarColor" />
-        <button class="btn" :disabled="!updCarName" @click="handleUpdate">
+        <button class="btn" :disabled="!updCarName" @click="handleUpdateCar">
           Update
         </button>
       </div>
@@ -154,8 +154,8 @@ onMounted(() => fetchPage(currentPage.value));
         <h2>Page # {{ currentPage }}</h2>
         <garage-list
           :garage="garage"
-          @remove="handleRemove"
-          @select="handleSelect"
+          @remove="handleRemoveCar"
+          @select="handleSelectCar"
         ></garage-list>
 
         <div class="pagination">

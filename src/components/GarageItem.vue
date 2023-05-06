@@ -1,6 +1,6 @@
 <script setup>
 import { ref, defineProps } from "vue";
-import garageCar from "./GarageCar.vue";
+import GarageCar from "./GarageCar.vue";
 import { startEngine } from "../api";
 
 const emit = defineEmits(["remove", "select"]);
@@ -61,7 +61,7 @@ function stop() {
     <div class="track-container">
       <div class="track track-one">
         <div class="car" ref="carElement">
-          <garageCar :color="props.car.color"></garageCar>
+          <garage-car :color="props.car.color"></garage-car>
         </div>
       </div>
       <div class="track track-two">
