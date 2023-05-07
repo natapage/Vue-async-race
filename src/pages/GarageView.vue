@@ -2,6 +2,7 @@
 import GarageList from "../components/GarageList.vue";
 import { ref, onMounted, computed } from "vue";
 import { getCars, createCar, deleteCar, updateCar } from "../api";
+import { carBrands, carModels } from "../constants";
 
 const emit = defineEmits(["remove", "select"]);
 
@@ -14,44 +15,6 @@ const updCarColor = ref("#ffffff");
 const updCarId = ref("");
 const currentPage = ref(1);
 const carNumber = ref(0);
-
-const carBrands = ref([
-  "Toyota",
-  "Ford",
-  "Chevrolet",
-  "Honda",
-  "Nissan",
-  "BMW",
-  "Mercedes-Benz",
-  "Audi",
-  "Volkswagen",
-  "Hyundai",
-  "Kia",
-  "Volvo",
-  "Mazda",
-  "Subaru",
-  "Jeep",
-  "Lexus",
-]);
-
-const carModels = ref([
-  "Corolla",
-  "Civic",
-  "Mustang",
-  "Camaro",
-  "Altima",
-  "M5",
-  "S-Class",
-  "A8",
-  "Golf",
-  "Elantra",
-  "Optima",
-  "XC90",
-  "CX-5",
-  "Impreza",
-  "Wrangler",
-  "RX",
-]);
 
 function handleSelectCar(car) {
   updCarId.value = car.id;
@@ -70,28 +33,6 @@ async function handleCreateCar() {
   carColor.value = "#ffffff";
 }
 
-async function generateCars() {
-  for (let i = 0; i < 100; i++) {
-    const newCar = {};
-    newCar.name = `${
-      carBrands.value[Math.floor(Math.random() * carBrands.value.length)]
-    } ${carModels.value[Math.floor(Math.random() * carModels.value.length)]}`;
-    newCar.color =
-      "#" +
-      Math.floor(Math.random() * 16777215)
-        .toString(16)
-        .padStart(6, "0");
-    await createCar(newCar);
-  }
-  fetchPage(currentPage.value);
-}
-
-async function fetchPage(page) {
-  const response = await getCars(page);
-  garage.value = response.items;
-  carNumber.value = response.count;
-}
-
 async function handleUpdateCar() {
   const carToUpdate = {
     name: updCarName.value,
@@ -106,6 +47,28 @@ async function handleUpdateCar() {
 async function handleRemoveCar(id) {
   await deleteCar(id);
   fetchPage(currentPage.value);
+}
+
+async function generateCars() {
+  for (let i = 0; i < 100; i++) {
+    const newCar = {};
+    newCar.name = `${carBrands[Math.floor(Math.random() * carBrands.length)]} ${
+      carModels[Math.floor(Math.random() * carModels.length)]
+    }`;
+    newCar.color =
+      "#" +
+      Math.floor(Math.random() * 16777215)
+        .toString(16)
+        .padStart(6, "0");
+    await createCar(newCar);
+  }
+  fetchPage(currentPage.value);
+}
+
+async function fetchPage(page) {
+  const response = await getCars(page);
+  garage.value = response.items;
+  carNumber.value = response.count;
 }
 
 async function previousPage() {

@@ -45,13 +45,9 @@ function stop() {
 
 <template>
   <div class="garage-item">
-    <div class="GarageItem_Buttons">
-      <button class="GarageItem_ButtonsSelect" @click="$emit('select', car)">
-        SELECT
-      </button>
-      <button class="GarageItem_ButtonsRemove" @click="$emit('remove', car.id)">
-        REMOVE
-      </button>
+    <div class="garage-item-btns">
+      <button class="btn" @click="$emit('select', car)">SELECT</button>
+      <button class="btn" @click="$emit('remove', car.id)">REMOVE</button>
       <text class="car-brand">{{ props.car.name }}</text>
     </div>
     <div class="race-btns">
@@ -100,5 +96,8 @@ function stop() {
 }
 .garage-item {
   margin-bottom: 15px;
+}
+.car-brand {
+  margin-left: 20px;
 }
 </style>
