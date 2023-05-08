@@ -4,7 +4,7 @@ import { ref, onMounted, computed } from "vue";
 import { getCars, createCar, deleteCar, updateCar } from "../api";
 import { carBrands, carModels } from "../constants";
 
-const emit = defineEmits(["remove", "select"]);
+const emit = defineEmits(["remove", "select", "finish"]);
 
 const garage = ref([]);
 
@@ -15,6 +15,7 @@ const updCarColor = ref("#ffffff");
 const updCarId = ref("");
 const currentPage = ref(1);
 const carNumber = ref(0);
+const isStarted = ref(false);
 
 function handleSelectCar(car) {
   updCarId.value = car.id;
@@ -73,21 +74,30 @@ async function fetchPage(page) {
 
 async function previousPage() {
   currentPage.value--;
-  let response = await getCars(currentPage.value);
-  garage.value = response.items;
+  await fetchPage(currentPage.value);
+  console.log(garage.value);
 }
 
 async function nextPage() {
   currentPage.value++;
-  let response = await getCars(currentPage.value);
-  garage.value = response.items;
+  await fetchPage(currentPage.value);
+  console.log(garage.value);
 }
 
-function startRace() {}
+function getWinner(id) {
+  console.log(id);
+}
+
+function startRace() {
+  isStarted.value = true;
+}
 
 const totalPages = computed(() => Math.floor(carNumber.value / 7) + 1);
 
-onMounted(() => fetchPage(currentPage.value));
+onMounted(() => {
+  fetchPage(currentPage.value);
+  console.log(garage);
+});
 </script>
 
 <template>
@@ -116,7 +126,9 @@ onMounted(() => fetchPage(currentPage.value));
         <h1>Garage ({{ carNumber }})</h1>
         <h2>Page # {{ currentPage }}</h2>
         <garage-list
+          :isStarted="isStarted"
           :garage="garage"
+          @finish="getWinner"
           @remove="handleRemoveCar"
           @select="handleSelectCar"
         ></garage-list>

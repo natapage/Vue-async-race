@@ -52,3 +52,6 @@ export const stopEngine = async (id) =>
       method: "PATCH",
     })
   ).json();
+
+export const driveMode = async (id) =>
+  (await fetch(`${engine}?id=${id}&status=drive`, { method: "PATCH" })).json();

@@ -1,13 +1,23 @@
 <script setup>
-import { ref, defineProps } from "vue";
+import { ref, defineProps, watchEffect } from "vue";
 import GarageCar from "./GarageCar.vue";
-import { startEngine } from "../api";
+import { startEngine, driveMode } from "../api";
 
-const emit = defineEmits(["remove", "select"]);
+const emit = defineEmits(["remove", "select", "finish"]);
 const props = defineProps({
   car: {
     type: Object,
   },
+  isStarted: {
+    type: Boolean,
+    default: false,
+  },
+});
+
+watchEffect(() => {
+  if (props.isStarted) {
+    start();
+  }
 });
 
 const carElement = ref(null);
@@ -35,6 +45,9 @@ async function start() {
       fill: "forwards",
     }
   );
+  driveMode(props.car.id)
+    .then(() => emit("finish", props.car.id))
+    .catch((err) => animationObj.pause());
 }
 
 function stop() {
