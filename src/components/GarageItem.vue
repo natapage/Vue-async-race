@@ -1,32 +1,33 @@
 <script setup>
-import { ref, defineProps, watchEffect } from "vue";
+import { ref, defineProps, watchEffect, defineEmits } from "vue";
 import GarageCar from "./GarageCar.vue";
 import { startEngine, driveMode } from "../api";
 
+let isCarStarted = ref(false);
 const emit = defineEmits(["remove", "select", "finish"]);
 const props = defineProps({
   car: {
     type: Object,
   },
-  isStarted: {
+  isRaceStarted: {
     type: Boolean,
     default: false,
   },
 });
 
+let animationObj;
+
 watchEffect(() => {
-  if (props.isStarted) {
+  if (props.isRaceStarted) {
     start();
-  }
+  } else if (animationObj) stop();
 });
 
 const carElement = ref(null);
 
-let animationObj;
-
 async function start() {
+  isCarStarted.value = true;
   const response = await startEngine(props.car.id);
-  console.log(response);
   const time = response.distance / response.velocity;
 
   animationObj = carElement.value.animate(
@@ -45,12 +46,16 @@ async function start() {
       fill: "forwards",
     }
   );
+
   driveMode(props.car.id)
-    .then(() => emit("finish", props.car.id))
-    .catch((err) => animationObj.pause());
+    .then(() => {
+      emit("finish", props.car.id, time);
+    })
+    .catch(() => animationObj.pause());
 }
 
 function stop() {
+  isCarStarted.value = false;
   animationObj.reverse();
   animationObj.finish();
 }
@@ -59,13 +64,35 @@ function stop() {
 <template>
   <div class="garage-item">
     <div class="garage-item-btns">
-      <button class="btn" @click="$emit('select', car)">SELECT</button>
-      <button class="btn" @click="$emit('remove', car.id)">REMOVE</button>
+      <button
+        class="btn"
+        :disabled="isRaceStarted"
+        @click="$emit('select', car)"
+      >
+        SELECT
+      </button>
+      <button
+        class="btn"
+        :disabled="isRaceStarted"
+        @click="$emit('remove', car.id)"
+      >
+        REMOVE
+      </button>
       <text class="car-brand">{{ props.car.name }}</text>
     </div>
     <div class="race-btns">
-      <button class="btn" @click="start">A</button>
-      <button class="btn" @click="stop">B</button>
+      <button
+        class="btn"
+        ref="startBtn"
+        :disabled="isCarStarted"
+        @click="start"
+      >
+        A
+      </button>
+
+      <button class="btn" ref="stopBtn" :disabled="!isCarStarted" @click="stop">
+        B
+      </button>
     </div>
     <div class="track-container">
       <div class="track track-one">
