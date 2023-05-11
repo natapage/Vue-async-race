@@ -8,7 +8,6 @@ import {
   updateCar,
   createWinner,
   getWinner,
-  getWinners,
   updateWinner,
 } from "../api";
 import { carBrands, carModels } from "../constants";
@@ -41,7 +40,7 @@ async function handleCreateCar() {
     color: carColor.value,
   };
   await createCar(newCar);
-  fetchPage(currentPage.value);
+  await fetchPage(currentPage.value);
   carName.value = "";
   carColor.value = "#ffffff";
 }
@@ -52,14 +51,14 @@ async function handleUpdateCar() {
     color: updCarColor.value,
   };
   await updateCar(carToUpdate, updCarId.value);
-  fetchPage(currentPage.value);
+  await fetchPage(currentPage.value);
   updCarName.value = "";
   updCarColor.value = "#ffffff";
 }
 
 async function handleRemoveCar(id) {
   await deleteCar(id);
-  fetchPage(currentPage.value);
+  await fetchPage(currentPage.value);
 }
 
 async function generateCars() {
@@ -75,7 +74,7 @@ async function generateCars() {
         .padStart(6, "0");
     await createCar(newCar);
   }
-  fetchPage(currentPage.value);
+  await fetchPage(currentPage.value);
 }
 
 async function fetchPage(page) {
@@ -111,21 +110,20 @@ function getRaceWinner(car, winTime) {
 }
 
 async function updateWinners(car, time) {
-  try {
-    const response = await getWinner(car.id);
+  const response = await getWinner(car.id);
+  if (response.id) {
     const winnerToUpdate = {};
     winnerToUpdate.id = car.id;
     winnerToUpdate.wins = response.wins + 1;
     winnerToUpdate.time = time;
     await updateWinner(winnerToUpdate, car.id);
-  } catch {
+  }
+  if (!response.id) {
     const winnerToCreate = {};
     winnerToCreate.id = car.id;
     winnerToCreate.wins = 1;
     winnerToCreate.time = time;
-    await createWinner(winnerToCreate).catch(() =>
-      console.log("winner is already exists")
-    );
+    await createWinner(winnerToCreate);
   }
 }
 

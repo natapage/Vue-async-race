@@ -16,6 +16,7 @@ async function getWinnersList() {
 }
 
 getWinnersList();
+console.log(winnersList);
 </script>
 
 <template>
@@ -35,7 +36,7 @@ getWinnersList();
       <tbody>
         <tr v-for="(winner, index) in winnersList" :key="winner.id">
           <td>{{ index + 1 }}</td>
-          <td><garage-car :color="winner.color"></garage-car></td>
+          <td><garage-car :color="winner.color" /></td>
           <td>{{ winner.name }}</td>
           <td>{{ winner.wins }}</td>
           <td>{{ winner.time }}</td>
