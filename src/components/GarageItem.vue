@@ -20,7 +20,10 @@ let animationObj;
 watchEffect(() => {
   if (props.isRaceStarted) {
     start();
-  } else if (animationObj) stop();
+  }
+  if (!props.isRaceStarted && animationObj) {
+    stop();
+  }
 });
 
 const carElement = ref(null);
@@ -49,9 +52,31 @@ async function start() {
 
   driveMode(props.car.id)
     .then(() => {
-      emit("finish", props.car.id, time);
+      emit("finish", props.car, time);
     })
-    .catch(() => animationObj.pause());
+    .catch((error) => {
+      animationObj.pause();
+      if (error.status === 400) {
+        console.log(
+          "Wrong parameters: id should be any positive number, status should be started, stopped or drive"
+        );
+      }
+      if (error.status === 404) {
+        console.log(
+          "Engine parameters for car with such id was not found in the garage. Have you tried to set engine status to started before?"
+        );
+      }
+      if (error.status === 429) {
+        console.log(
+          "Drive already in progress. You can't run drive for the same car twice while it's not stopped"
+        );
+      }
+      if (error.status === 500) {
+        console.log(
+          "Car has been stopped suddenly. Its engine was broken down"
+        );
+      }
+    });
 }
 
 function stop() {
@@ -64,20 +89,8 @@ function stop() {
 <template>
   <div class="garage-item">
     <div class="garage-item-btns">
-      <button
-        class="btn"
-        :disabled="isRaceStarted"
-        @click="$emit('select', car)"
-      >
-        SELECT
-      </button>
-      <button
-        class="btn"
-        :disabled="isRaceStarted"
-        @click="$emit('remove', car.id)"
-      >
-        REMOVE
-      </button>
+      <button class="btn" @click="$emit('select', car)">SELECT</button>
+      <button class="btn" @click="$emit('remove', car.id)">REMOVE</button>
       <text class="car-brand">{{ props.car.name }}</text>
     </div>
     <div class="race-btns">
@@ -90,7 +103,12 @@ function stop() {
         A
       </button>
 
-      <button class="btn" ref="stopBtn" :disabled="!isCarStarted" @click="stop">
+      <button
+        class="btn"
+        ref="stopBtn"
+        :disabled="!isCarStarted || isRaceStarted"
+        @click="stop"
+      >
         B
       </button>
     </div>

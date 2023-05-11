@@ -1,7 +1,16 @@
 <script setup>
 import GarageItem from "../components/GarageItem.vue";
 import { ref, onMounted, computed, defineEmits } from "vue";
-import { getCars, createCar, deleteCar, updateCar } from "../api";
+import {
+  getCars,
+  createCar,
+  deleteCar,
+  updateCar,
+  createWinner,
+  getWinner,
+  getWinners,
+  updateWinner,
+} from "../api";
 import { carBrands, carModels } from "../constants";
 
 const emit = defineEmits(["remove", "select", "finish"]);
@@ -86,19 +95,38 @@ async function nextPage() {
   await fetchPage(currentPage.value);
 }
 
-function getWinner(id, time) {
-  if (isRaceStarted) {
-    const winnerId = id;
+function getRaceWinner(car, winTime) {
+  if (isRaceStarted.value) {
+    const winnerId = car.id;
     if (winnerName.value === "") {
-      winnerTime.value = Math.round(time / 100) / 10;
+      winnerTime.value = Math.round(winTime / 100) / 10;
       winnerName.value = garage.value.filter(
         (item) => item.id === winnerId
       )[0].name;
       isGotWinner.value = true;
       setTimeout(() => (isGotWinner.value = false), 3000);
+      updateWinners(car, winnerTime.value);
     }
   }
-  // isRaceStarted.value = false;
+}
+
+async function updateWinners(car, time) {
+  try {
+    const response = await getWinner(car.id);
+    const winnerToUpdate = {};
+    winnerToUpdate.id = car.id;
+    winnerToUpdate.wins = response.wins + 1;
+    winnerToUpdate.time = time;
+    await updateWinner(winnerToUpdate, car.id);
+  } catch {
+    const winnerToCreate = {};
+    winnerToCreate.id = car.id;
+    winnerToCreate.wins = 1;
+    winnerToCreate.time = time;
+    await createWinner(winnerToCreate).catch(() =>
+      console.log("winner is already exists")
+    );
+  }
 }
 
 function startRace() {
@@ -123,22 +151,14 @@ onMounted(() => {
       <div class="creating-form">
         <input v-model="carName" type="text" />
         <input type="color" v-model="carColor" />
-        <button
-          class="btn"
-          @click="handleCreateCar"
-          :disabled="!carName && isRaceStarted"
-        >
+        <button class="btn" @click="handleCreateCar" :disabled="!carName">
           Create
         </button>
       </div>
       <div class="updating-form">
         <input type="text" v-model="updCarName" />
         <input type="color" v-model="updCarColor" />
-        <button
-          class="btn"
-          :disabled="!updCarName && isRaceStarted"
-          @click="handleUpdateCar"
-        >
+        <button class="btn" :disabled="!updCarName" @click="handleUpdateCar">
           Update
         </button>
       </div>
@@ -146,10 +166,8 @@ onMounted(() => {
         <button class="btn" @click="startRace" :disabled="isRaceStarted">
           RACE
         </button>
-        <button class="btn" @click="resetRace">RESET</button>
-        <button class="btn" @click="generateCars" :disabled="isRaceStarted">
-          GENERATE CARS
-        </button>
+        <button class="btn" @click="resetRace">RESET RACE</button>
+        <button class="btn" @click="generateCars">GENERATE CARS</button>
       </div>
       <div class="garage">
         <h1>Garage ({{ carNumber }})</h1>
@@ -160,7 +178,7 @@ onMounted(() => {
           :car="car"
           :key="car.id"
           :isRaceStarted="isRaceStarted"
-          @finish="getWinner"
+          @finish="getRaceWinner"
           @remove="handleRemoveCar"
           @select="handleSelectCar"
         ></garage-item>
