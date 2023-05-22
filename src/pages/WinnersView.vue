@@ -26,7 +26,6 @@ async function handleParamsOnChange(sort, order) {
 }
 
 getWinnersList();
-console.log(winnersList);
 
 async function previousPage() {
   currentPage.value--;
@@ -65,7 +64,7 @@ async function nextPage() {
       </thead>
       <tbody>
         <tr v-for="(winner, index) in winnersList" :key="winner.id">
-          <td>{{ index + 1 }}</td>
+          <td>{{ index + currentPage * 10 - 9 }}</td>
           <td><garage-car :color="winner.color" /></td>
           <td>{{ winner.name }}</td>
           <td>{{ winner.wins }}</td>
