@@ -56,7 +56,7 @@ export const stopEngine = async (id) =>
 export const driveMode = async (id) =>
   (await fetch(`${engine}?id=${id}&status=drive`, { method: "PATCH" })).json();
 
-export const getWinners = async (page, limit = 6, sort, order) => {
+export const getWinners = async (page, limit = 10, sort, order) => {
   const response = await fetch(
     `${winners}?_page=${page}&_limit=${limit}&_sort=${sort}&_order=${order}`
   );

@@ -1,5 +1,5 @@
 <script setup>
-import { ref, defineProps, watchEffect, defineEmits } from "vue";
+import { ref, watchEffect } from "vue";
 import GarageCar from "./GarageCar.vue";
 import { startEngine, driveMode } from "../api";
 
@@ -140,7 +140,7 @@ function stop() {
   align-items: center;
 }
 .track-one {
-  width: 500px;
+  width: 1800px;
 }
 .track-two {
   width: 100px;

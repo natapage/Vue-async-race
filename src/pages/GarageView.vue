@@ -1,6 +1,6 @@
 <script setup>
 import GarageItem from "../components/GarageItem.vue";
-import { ref, onMounted, computed, defineEmits } from "vue";
+import { ref, onMounted, computed } from "vue";
 import {
   getCars,
   createCar,
@@ -84,12 +84,14 @@ async function fetchPage(page) {
 }
 
 async function previousPage() {
+  resetRace();
   currentPage.value--;
   await fetchPage(currentPage.value);
   console.log(garage.value);
 }
 
 async function nextPage() {
+  resetRace();
   currentPage.value++;
   await fetchPage(currentPage.value);
 }
@@ -165,7 +167,9 @@ onMounted(() => {
           RACE
         </button>
         <button class="btn" @click="resetRace">RESET RACE</button>
-        <button class="btn" @click="generateCars">GENERATE CARS</button>
+        <button class="btn" @click="generateCars" :disabled="isRaceStarted">
+          GENERATE CARS
+        </button>
       </div>
       <div class="garage">
         <h1>Garage ({{ carNumber }})</h1>
