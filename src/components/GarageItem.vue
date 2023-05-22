@@ -127,7 +127,7 @@ function stop() {
 
 <style scoped>
 .car {
-  width: 100px;
+  width: 80px;
   height: 50px;
   position: absolute;
 }
@@ -140,10 +140,13 @@ function stop() {
   align-items: center;
 }
 .track-one {
-  width: 1800px;
+  width: 100%;
+  transition: width 0.3s ease-in-out; /* Добавлен переход */
 }
+
 .track-two {
   width: 100px;
+  transition: width 0.3s ease-in-out; /* Добавлен переход */
 }
 .track-container {
   display: flex;

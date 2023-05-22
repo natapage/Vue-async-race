@@ -171,10 +171,9 @@ onMounted(() => {
           GENERATE CARS
         </button>
       </div>
-      <div class="garage">
+      <div class="garage-list">
         <h1>Garage ({{ carNumber }})</h1>
         <h2>Page # {{ currentPage }}</h2>
-
         <garage-item
           v-for="car in garage"
           :car="car"

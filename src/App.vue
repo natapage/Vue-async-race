@@ -43,4 +43,7 @@ export default {
 .tab {
   display: flex;
 }
+.tabs {
+  margin: 0 auto;
+}
 </style>
