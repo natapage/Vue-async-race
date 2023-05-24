@@ -10,23 +10,24 @@ import {
   getWinner,
   updateWinner,
 } from "../api";
-import { carBrands, carModels } from "../constants";
+import { carBrands, carModels } from "../garageConstants";
+import {
+  garage,
+  carName,
+  carColor,
+  updCarName,
+  updCarColor,
+  updCarId,
+  currentPage,
+  carNumber,
+  isRaceStarted,
+  winnerName,
+  winnerTime,
+  isGotWinner,
+  totalPages,
+} from "../garageVariables";
 
 const emit = defineEmits(["remove", "select", "finish"]);
-
-const garage = ref([]);
-
-const carName = ref("");
-const carColor = ref("#ffffff");
-const updCarName = ref("");
-const updCarColor = ref("#ffffff");
-const updCarId = ref("");
-const currentPage = ref(1);
-const carNumber = ref(0);
-const isRaceStarted = ref(false);
-const winnerName = ref("");
-const winnerTime = ref(0);
-const isGotWinner = ref(false);
 
 function handleSelectCar(car) {
   updCarId.value = car.id;
@@ -138,8 +139,6 @@ function resetRace() {
   isRaceStarted.value = false;
 }
 
-const totalPages = computed(() => Math.floor(carNumber.value / 7) + 1);
-
 onMounted(() => {
   fetchPage(currentPage.value);
 });
@@ -171,7 +170,7 @@ onMounted(() => {
           GENERATE CARS
         </button>
       </div>
-      <div class="garage-list">
+      <div class="garage">
         <h1>Garage ({{ carNumber }})</h1>
         <h2>Page # {{ currentPage }}</h2>
         <garage-item
